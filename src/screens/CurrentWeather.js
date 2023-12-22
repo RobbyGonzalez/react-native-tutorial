@@ -4,40 +4,58 @@ import { Feather } from "@expo/vector-icons"
 import RowText from "../components/RowText"
 import { weatherType } from "../utils/weatherType"
 
-const CurrentWeather = () => {
+const CurrentWeather = ({ weatherData }) => {
   const {
+    wrapper,
     highLowWrapper,
     highlow,
     bodyWrapper,
     description,
     message,
-    temp,
+    tempStyles,
     feels
   } = styles
 
+  const {
+    main: { temp, feels_like, temp_max, temp_min },
+    weather
+  } = weatherData
+  //##########"?." means that you are optionally chaining the object. If the object is undefined, it will not throw an error.############
+  const weatherCondition = weather[0]?.main
+
   return (
     // SafeAreaView is a wrapper that makes sure the content is not hidden by the notch or the home bar
-    <SafeAreaView style={styles.wrapper}>
+    //Dynamically set the background color based on the weather condition using the weatherType utility object
+    <SafeAreaView
+      style={[
+        wrapper,
+        { backgroundColor: weatherType[weatherCondition]?.backgroundColor }
+      ]}
+    >
       {/* View is like a div */}
       <View
         style={{
           ...styles.container
         }}
       >
-        <Feather name="sun" size={100} color="black" />
-        <Text style={temp}>6</Text>
-        <Text style={feels}>Feels like 5</Text>
+        <Feather
+          name={weatherType[weatherCondition]?.icon}
+          size={100}
+          color="white"
+        />
+        <Text style={tempStyles}>{`${Math.round(temp)}°`}</Text>
+        <Text style={feels}>{`Feels like ${Math.round(feels_like)}°`}</Text>
         <RowText
-          messageOne={"High: 8"}
-          messageTwo={"Low: 6"}
+          messageOne={`High: ${Math.round(temp_max)}° `}
+          messageTwo={`Low: ${Math.round(temp_min)}°`}
           containerStyles={highLowWrapper}
           messageOneStyles={highlow}
           messageTwoStyles={highlow}
         />
       </View>
       <RowText
-        messageOne={"It's Sunny"}
-        messageTwo={weatherType["Thunderstorm"].message}
+        messageOne={weather[0]?.description}
+        messageTwo={weatherType[weatherCondition].message}
         containerStyles={bodyWrapper}
         messageOneStyles={description}
         messageTwoStyles={message}
@@ -50,15 +68,14 @@ const CurrentWeather = () => {
 const styles = StyleSheet.create({
   wrapper: {
     flex: 1,
-    paddingTop: Platform.OS === "android" ? 30 : 0,
-    backgroundColor: "orange"
+    paddingTop: Platform.OS === "android" ? 30 : 0
   },
   container: {
     flex: 1,
     alignItems: "center",
     justifyContent: "center"
   },
-  temp: {
+  tempStyles: {
     fontSize: 48,
     color: "black"
   },
@@ -80,11 +97,11 @@ const styles = StyleSheet.create({
     flexDirection: "row"
   },
   description: {
-    fontSize: 48,
+    fontSize: 43,
     color: "black"
   },
   message: {
-    fontSize: 30,
+    fontSize: 25,
     color: "black"
   }
 })

@@ -2,56 +2,16 @@ import React from "react"
 import {
   SafeAreaView,
   StyleSheet,
-  Text,
   FlatList,
   StatusBar,
   ImageBackground
 } from "react-native"
 import ListItem from "../components/ListItem"
 
-const DATA = [
-  {
-    main: {
-      temp_min: 6.76,
-      temp_max: 7.87
-    },
-    weather: [
-      {
-        main: "Rain"
-      }
-    ],
-    dt_txt: "2022-08-30 15:00:00"
-  },
-  {
-    main: {
-      temp_min: 2.84,
-      temp_max: 5.45
-    },
-    weather: [
-      {
-        main: "Rain"
-      }
-    ],
-    dt_txt: "2022-08-30 18:00:00"
-  },
-  {
-    main: {
-      temp_min: 0.31,
-      temp_max: 2.46
-    },
-    weather: [
-      {
-        main: "Rain"
-      }
-    ],
-    dt_txt: "2022-08-30 21:00:00"
-  }
-]
-
-const UpComingWeather = () => {
+const UpComingWeather = ({ weatherData }) => {
   const renderItem = ({ item }) => (
     <ListItem
-      condition={item.weather[0].main}
+      condition={item.weather[0]?.main}
       dt_txt={item.dt_txt}
       min={item.main.temp_min}
       max={item.main.temp_max}
@@ -66,12 +26,10 @@ const UpComingWeather = () => {
         source={require("../../assets/upcoming-background.jpg")}
         style={image}
       >
-        <Text>UpComingWeather</Text>
         {/* Lists need keys, like map lists do */}
         {/* renderItem and keyExtractor props look to be map functions that take a call back and map through the data prop. */}
-
         <FlatList
-          data={DATA}
+          data={weatherData}
           renderItem={renderItem}
           keyExtractor={(item) => item.dt_txt}
           // ItemSeparatorComponent={() => (
@@ -85,13 +43,13 @@ const UpComingWeather = () => {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    marginTop: StatusBar.currentHeight || 0
+    flex: 1
     // alignItems: "center",
     // justifyContent: "center",
     // backgroundColor: "royalblue"
   },
   image: {
+    paddingTop: StatusBar.currentHeight || 0,
     flex: 1,
     resizeMode: "cover",
     justifyContent: "center"
